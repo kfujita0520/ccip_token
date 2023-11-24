@@ -37,7 +37,7 @@ contract MyToken is ERC20, CCIPHandler {
     }
 
 
-    function crossTransfer(uint64 destinationChainSelector, address receiver, uint256 amount, PayFeesIn payFeesIn) public payable {
+    function ccipSend(uint64 destinationChainSelector, address receiver, uint256 amount, PayFeesIn payFeesIn) public payable {
 
         require(amount < balanceOf(msg.sender));
 
@@ -64,6 +64,8 @@ contract MyToken is ERC20, CCIPHandler {
         Client.Any2EVMMessage memory message
     ) internal override {
         address srcSender = abi.decode(message.sender, (address));
+        //TODO enable srcSender validation
+        //require(validateSourceSender(message.sourceChainSelector, srcSender), "the sender is unauthorized");
         console.log(msg.sender);
         (bool success,) = address(this).call(message.data);
         require(success);

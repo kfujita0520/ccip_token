@@ -1,5 +1,5 @@
 import { ethers } from "hardhat";
-import { LINK_ADDRESSES } from "./constants";
+import { LINK_ADDRESSES, PayFeesIn } from "./constants";
 import { getRouterConfig } from "./utils";
 
 async function main() {
@@ -7,24 +7,29 @@ async function main() {
   console.log('deployer: ', deployer.address);
 
   let networkName = "polygonMumbai";
-  const MyToken2Contract = await ethers.getContractFactory("MyToken2");
-  const MyToken2 = await MyToken2Contract.deploy(getRouterConfig(networkName).address, LINK_ADDRESSES[networkName], ethers.utils.parseEther("10000"));
-  await MyToken2.deployed();
-  console.log(`MyToken2 is deployed to ${MyToken2.address}`);
+  const MyTokenContract = await ethers.getContractFactory("MyToken");
+  const MyToken = await MyTokenContract.deploy(getRouterConfig(networkName).address, LINK_ADDRESSES[networkName], ethers.utils.parseEther("10000"));
+  await MyToken.deployed();
+  console.log(`MyToken is deployed to ${MyToken.address}`);
   const CCIPReceiverTestContract = await ethers.getContractFactory("CCIPReceiverTest");
-  const CCIPReceiverTest = await CCIPReceiverTestContract.deploy(MyToken2.address);
+  const CCIPReceiverTest = await CCIPReceiverTestContract.deploy(MyToken.address);
   await CCIPReceiverTest.deployed();
   console.log(`CCIPReceiverTest is deployed to ${CCIPReceiverTest.address}`);
-  //await MyToken2.grantRole(ethers.utils.keccak256(ethers.utils.toUtf8Bytes('MINTER_ROLE')), CCIPReceiverTest.address);
-  await MyToken2.grantRole(ethers.utils.id('MINTER_ROLE'), MyToken2.address);
-  console.log(await MyToken2.hasRole(ethers.utils.id('MINTER_ROLE'), CCIPReceiverTest.address));
-  console.log(await MyToken2.hasRole(ethers.utils.id('MINTER_ROLE'), MyToken2.address));
+  await MyToken.grantRole(ethers.utils.id('MINTER_ROLE'), MyToken.address);
+  console.log(await MyToken.hasRole(ethers.utils.id('MINTER_ROLE'), CCIPReceiverTest.address));
+  console.log(await MyToken.hasRole(ethers.utils.id('MINTER_ROLE'), MyToken.address));
 
   let messageId = ethers.utils.arrayify("0xdc3006d1b524fac22e696b8e657c25338f59b8a3a0220dd950380dbba9431131");
   let sourceChainSelector = '16015286601757825753';
   let sourceSender = "0x42F1060bFe4aDd36F86Bf21707e425A358551031";
   let amount = ethers.utils.parseEther("1");
   await CCIPReceiverTest.executeReceive(messageId, sourceChainSelector, sourceSender, amount);
+
+  //ccipSend test
+  let dstChainSelector = sourceChainSelector;
+  let dstContractAddress = sourceSender;
+  await MyToken.ccipSend(dstChainSelector, dstContractAddress, amount, PayFeesIn.Native, {value: ethers.utils.parseEther("10")});
+
 }
 
 // We recommend this pattern to be able to use async/await everywhere

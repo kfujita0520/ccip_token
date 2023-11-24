@@ -8,7 +8,7 @@ import {IRouterClient} from "@chainlink/contracts-ccip/src/v0.8/ccip/interfaces/
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/access/IAccessControl.sol";
 import {LinkTokenInterface} from "@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol";
-
+import "hardhat/console.sol";
 
 /// @title CCIPReceiver - Base contract for CCIP applications that can receive messages.
 abstract contract CCIPHandler is IAny2EVMMessageReceiver, IERC165, AccessControl {
@@ -69,11 +69,11 @@ abstract contract CCIPHandler is IAny2EVMMessageReceiver, IERC165, AccessControl
             destinationChainSelector,
             message
         );
-        //console.log(fee);
+        console.log(fee);
         //TODO validate if msg.sender can pay the fee either ETH or LINK and take it
 
         bytes32 messageId;
-        if (message.feeToken == address(0)) { //payFeeIn = PayFeesIn.LINK
+        if (message.feeToken != address(0)) { //payFeeIn = PayFeesIn.LINK
             // pre-approved in constructor
             // LinkTokenInterface(i_link).approve(i_router, fee);
             messageId = IRouterClient(i_router).ccipSend(
