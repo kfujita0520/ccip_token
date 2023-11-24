@@ -28,6 +28,7 @@ contract MyToken is ERC20, Ownable, IAny2EVMMessageReceiver, IERC165 {
 
     event MessageSent(bytes32 messageId);
     event MessageReceived(bytes32 messageId, uint64 sourceChainSelector, bytes sender, bytes data);
+    event Mint(address minter, uint256 amount);
 
     constructor(address router, address link, uint256 initialSupply) ERC20("MyToken", "MTN") {
         i_router = router;
@@ -51,7 +52,7 @@ contract MyToken is ERC20, Ownable, IAny2EVMMessageReceiver, IERC165 {
         tokenAmounts[0] = Client.EVMTokenAmount({token: address(this), amount: amount});
         Client.EVM2AnyMessage memory message = Client.EVM2AnyMessage({
             receiver: abi.encode(receiver),
-            data: abi.encodeWithSignature("mint(address, uint256)", msg.sender, amount),
+            data: abi.encodeWithSignature("mint(address,uint256)", msg.sender, amount),
             //tokenAmounts: tokenAmounts,
             tokenAmounts: new Client.EVMTokenAmount[](0),
             extraArgs: "",
@@ -87,7 +88,7 @@ contract MyToken is ERC20, Ownable, IAny2EVMMessageReceiver, IERC165 {
 
 
     /// @inheritdoc IAny2EVMMessageReceiver
-    function ccipReceive(Client.Any2EVMMessage calldata message) external override onlyRouter {
+    function ccipReceive(Client.Any2EVMMessage calldata message) external override {
         _ccipReceive(message);
     }
 
@@ -111,6 +112,11 @@ contract MyToken is ERC20, Ownable, IAny2EVMMessageReceiver, IERC165 {
     modifier onlyRouter() {
         if (msg.sender != address(i_router)) revert InvalidRouter(msg.sender);
         _;
+    }
+
+    function mint(address to, uint256 amount) public {
+        console.log("mint function is called");
+        emit Mint(to, amount);
     }
 
 }
