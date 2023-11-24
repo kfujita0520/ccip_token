@@ -10,7 +10,7 @@ import "hardhat/console.sol";
  * THIS IS AN EXAMPLE CONTRACT THAT USES UN-AUDITED CODE.
  * DO NOT USE THIS CODE IN PRODUCTION.
  */
-contract MyToken2 is ERC20, CCIPHandler {
+contract MyToken is ERC20, CCIPHandler {
 
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
