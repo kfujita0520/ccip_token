@@ -5,10 +5,9 @@ import { getRouterConfig } from "./utils";
 async function main() {
   const [deployer, signer] = await ethers.getSigners();
 
-  //const CCIPReceiverTest = await hre.ethers.getContractAt("CCIPReceiverTest", 0x51078c632a6a6d91E73aB8EdCC7Cb9a98dFc55d6);
   let networkName = "polygonMumbai";
   const DestinationMinterContract = await ethers.getContractFactory("DestinationMinter");
-  const destinationMinter = await DestinationMinterContract.deploy(getRouterConfig(networkName).address, "0x351ccE1927EF15168eC4F9838e4A91615B38Cd9E");
+  const destinationMinter = await DestinationMinterContract.deploy(getRouterConfig(networkName).address);
   await destinationMinter.deployed();
   console.log(`destinationMinter is deployed to ${destinationMinter.address}`);
   const CCIPReceiverTestContract = await ethers.getContractFactory("CCIPReceiverTest");
