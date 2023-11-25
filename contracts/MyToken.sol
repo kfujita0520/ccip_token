@@ -48,7 +48,7 @@ contract MyToken is ERC20, CCIPHandler {
         //tokenAmounts[0] = Client.EVMTokenAmount({token: address(this), amount: amount});
         Client.EVM2AnyMessage memory message = Client.EVM2AnyMessage({
             receiver: abi.encode(receiver),
-            data: abi.encodeWithSignature("mint(address, uint256)", msg.sender, amount),
+            data: abi.encodeWithSignature("mint(address,uint256)", msg.sender, amount),
             tokenAmounts: new Client.EVMTokenAmount[](0),
             extraArgs: "",
             feeToken: payFeesIn == PayFeesIn.LINK ? i_link : address(0)
