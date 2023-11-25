@@ -25,13 +25,13 @@ contract MyToken is ERC20, CCIPHandler {
 
 
     function mint(address to, uint256 amount) public onlyMinter(msg.sender) {
-        console.log("mint function is executed");
+        console.log("mint function is executed by %s", msg.sender);
         _mint(to, amount);
         emit Mint(to, amount);
     }
 
     modifier onlyMinter(address user){
-        console.log(user);
+        //console.log(user);
         require(hasRole(MINTER_ROLE, user), "Caller is not a minter");
         _;
     }
@@ -64,9 +64,11 @@ contract MyToken is ERC20, CCIPHandler {
         Client.Any2EVMMessage memory message
     ) internal override {
         address srcSender = abi.decode(message.sender, (address));
-        //TODO enable srcSender validation
-        //require(validateSourceSender(message.sourceChainSelector, srcSender), "the sender is unauthorized");
-        console.log(msg.sender);
+        if(securityMode){
+            require(validateSourceSender(message.sourceChainSelector, srcSender), "the sender is unauthorized");
+        }
+        //msg.sender should be router in production
+        //console.log(msg.sender);
         (bool success,) = address(this).call(message.data);
         require(success);
         emit MessageReceived(message.messageId, message.sourceChainSelector, srcSender, message.data);

@@ -14,7 +14,7 @@ import "hardhat/console.sol";
 abstract contract CCIPHandler is IAny2EVMMessageReceiver, IERC165, AccessControl {
     address immutable i_router;
     address immutable i_link;
-    bool public enableRouteOnly = false;//test purpose. In production, this is always true.
+    bool public securityMode = false;//test purpose. In production, this is always true.
     mapping(uint64 => address) public sourceSender;
 
     enum PayFeesIn {
@@ -46,8 +46,8 @@ abstract contract CCIPHandler is IAny2EVMMessageReceiver, IERC165, AccessControl
         return (sourceSender[chainSelector] == sender);
     }
 
-    function updateRouteOnly(bool enable) public onlyAdmin(msg.sender) {
-        enableRouteOnly = enable;
+    function updateSecurityMode(bool enable) public onlyAdmin(msg.sender) {
+        securityMode = enable;
     }
 
     modifier onlyAdmin(address user) {
@@ -69,7 +69,8 @@ abstract contract CCIPHandler is IAny2EVMMessageReceiver, IERC165, AccessControl
             destinationChainSelector,
             message
         );
-        console.log(fee);
+        //fee of native is very high in forknet
+        //console.log(fee);
         //TODO validate if msg.sender can pay the fee either ETH or LINK and take it
 
         bytes32 messageId;
@@ -103,7 +104,7 @@ abstract contract CCIPHandler is IAny2EVMMessageReceiver, IERC165, AccessControl
 
     /// @dev only calls from the set router are accepted.
     modifier onlyRouter() {
-        if (enableRouteOnly && msg.sender != address(i_router)) revert InvalidRouter(msg.sender);
+        if (securityMode && msg.sender != address(i_router)) revert InvalidRouter(msg.sender);
         _;
     }
 }

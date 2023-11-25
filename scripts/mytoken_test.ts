@@ -16,8 +16,8 @@ async function main() {
   await CCIPReceiverTest.deployed();
   console.log(`CCIPReceiverTest is deployed to ${CCIPReceiverTest.address}`);
   await MyToken.grantRole(ethers.utils.id('MINTER_ROLE'), MyToken.address);
-  console.log(await MyToken.hasRole(ethers.utils.id('MINTER_ROLE'), CCIPReceiverTest.address));
-  console.log(await MyToken.hasRole(ethers.utils.id('MINTER_ROLE'), MyToken.address));
+  console.log('Minter role of CCIPReceiverTest: ', await MyToken.hasRole(ethers.utils.id('MINTER_ROLE'), CCIPReceiverTest.address));
+  console.log('Minter role of MyToken: ', await MyToken.hasRole(ethers.utils.id('MINTER_ROLE'), MyToken.address));
 
   let messageId = ethers.utils.arrayify("0xdc3006d1b524fac22e696b8e657c25338f59b8a3a0220dd950380dbba9431131");
   let sourceChainSelector = '16015286601757825753';
@@ -29,7 +29,7 @@ async function main() {
   let dstChainSelector = sourceChainSelector;
   let dstContractAddress = sourceSender;
   await MyToken.ccipSend(dstChainSelector, dstContractAddress, amount, PayFeesIn.Native, {value: ethers.utils.parseEther("10")});
-
+  console.log('Complete ccipSend');
 }
 
 // We recommend this pattern to be able to use async/await everywhere
