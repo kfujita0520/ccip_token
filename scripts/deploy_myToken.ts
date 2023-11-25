@@ -8,6 +8,7 @@ async function main() {
   const MyTokenContract = await ethers.getContractFactory("MyToken");
   const myToken = await MyTokenContract.deploy(getRouterConfig(hre.network.name).address, LINK_ADDRESSES[hre.network.name], ethers.utils.parseEther("10000"));
   await myToken.deployed();
+  await myToken.grantRole(ethers.utils.id('MINTER_ROLE'), myToken.address);
 
   console.log(
     `myToken is deployed to ${myToken.address}`
