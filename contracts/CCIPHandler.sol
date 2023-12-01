@@ -69,9 +69,6 @@ abstract contract CCIPHandler is IAny2EVMMessageReceiver, IERC165, AccessControl
             destinationChainSelector,
             message
         );
-        //fee of native is very high in forknet
-        //console.log(fee);
-        //TODO validate if msg.sender can pay the fee either ETH or LINK and take it
 
         bytes32 messageId;
         if (message.feeToken != address(0)) { //payFeeIn = PayFeesIn.LINK
@@ -90,7 +87,15 @@ abstract contract CCIPHandler is IAny2EVMMessageReceiver, IERC165, AccessControl
         return messageId;
     }
 
-    /////////////////////////////////////////////////////////////////////
+    function estimateFee(uint64 destinationChainSelector, Client.EVM2AnyMessage memory message) public virtual returns(uint256){
+        uint256 fee = IRouterClient(i_router).getFee(
+            destinationChainSelector,
+            message
+        );
+        return fee;
+    }
+
+        /////////////////////////////////////////////////////////////////////
     // Plumbing
     /////////////////////////////////////////////////////////////////////
 

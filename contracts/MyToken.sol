@@ -54,6 +54,8 @@ contract MyToken is ERC20, CCIPHandler {
             feeToken: payFeesIn == PayFeesIn.LINK ? i_link : address(0)
         });
 
+        //TODO validate if msg.sender can pay the fee either ETH or LINK and take it from msg.sender if LINK
+
         bytes32 messageId = _ccipSend(destinationChainSelector, message);
 
         emit MessageSent(messageId);

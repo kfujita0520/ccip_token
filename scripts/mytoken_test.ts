@@ -34,6 +34,7 @@ async function main() {
   //ccipSend test
   let dstChainSelector = sourceChainSelector;
   let dstContractAddress = sourceSender;
+  //fee of native token is very high in forking network environment
   await MyToken.ccipSend(dstChainSelector, dstContractAddress, amount, PayFeesIn.Native, {value: ethers.utils.parseEther("10")});
   console.log('Complete ccipSend');
 
