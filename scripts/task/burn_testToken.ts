@@ -5,7 +5,7 @@ import { getRouterConfig } from "./utils";
 async function main() {
 
   const [deployer, signer] = await ethers.getSigners();
-  let contractAddress = '0x4123C975649cF3bF2149Ba027919191A795b9585';
+  let contractAddress = '0xA65992d736dF2289Dc1D60a255e91Bb530630743';
 
   const myToken = await hre.ethers.getContractAt("MyToken", contractAddress);
   let amount = await myToken.balanceOf(deployer.address);

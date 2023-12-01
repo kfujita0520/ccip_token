@@ -9,10 +9,13 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat: {
       chainId: 31337,
+      // forking: {
+      //   url: process.env.ETHEREUM_SEPOLIA_RPC_URL !== undefined ? process.env.ETHEREUM_SEPOLIA_RPC_URL : '', // replace with your Infura project ID
+      //   blockNumber: 4721700, // replace with the block number you want to fork from
+      // },
       forking: {
-        url: process.env.ETHEREUM_SEPOLIA_RPC_URL !== undefined ? process.env.ETHEREUM_SEPOLIA_RPC_URL : '', // replace with your Infura project ID
-        blockNumber: 4721700, // replace with the block number you want to fork from
-        accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+        url: process.env.POLYGON_MUMBAI_RPC_URL !== undefined ? process.env.POLYGON_MUMBAI_RPC_URL : '', // replace with your Infura project ID
+        blockNumber: 42776725, // replace with the block number you want to fork from
       },
     },
     ethereumSepolia: {

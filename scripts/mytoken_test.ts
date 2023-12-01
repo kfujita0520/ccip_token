@@ -18,6 +18,12 @@ async function main() {
   await MyToken.grantRole(ethers.utils.id('MINTER_ROLE'), MyToken.address);
   console.log('Minter role of CCIPReceiverTest: ', await MyToken.hasRole(ethers.utils.id('MINTER_ROLE'), CCIPReceiverTest.address));
   console.log('Minter role of MyToken: ', await MyToken.hasRole(ethers.utils.id('MINTER_ROLE'), MyToken.address));
+  const CCIPSenderTestContract = await ethers.getContractFactory("CCIPSenderTest");
+  const CCIPSenderTest = await CCIPSenderTestContract.deploy(MyToken.address);
+  await CCIPSenderTest.deployed();
+  console.log(`CCIPSenderTest is deployed to ${CCIPSenderTest.address}`);
+  await MyToken.transfer(CCIPSenderTest.address, ethers.utils.parseEther("5"));
+  console.log('the balance of CCIPSenderTest: ', await MyToken.balanceOf(CCIPSenderTest.address));
 
   let messageId = ethers.utils.arrayify("0xdc3006d1b524fac22e696b8e657c25338f59b8a3a0220dd950380dbba9431131");
   let sourceChainSelector = '16015286601757825753';
@@ -30,6 +36,9 @@ async function main() {
   let dstContractAddress = sourceSender;
   await MyToken.ccipSend(dstChainSelector, dstContractAddress, amount, PayFeesIn.Native, {value: ethers.utils.parseEther("10")});
   console.log('Complete ccipSend');
+
+  await CCIPSenderTest.executeSend(dstChainSelector, dstContractAddress, amount, PayFeesIn.Native, {value: ethers.utils.parseEther("10")});
+  console.log('the balance of CCIPSenderTest: ', await MyToken.balanceOf(CCIPSenderTest.address));
 }
 
 // We recommend this pattern to be able to use async/await everywhere
